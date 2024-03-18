@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+# Суперюзер: login: super /EMail: super@fake.com /pwd: yandex22.
+
 
 class CustomUser(AbstractUser):
     """Модель пользователя."""
@@ -9,7 +11,8 @@ class CustomUser(AbstractUser):
                                                     ('moderator', 'moderator'))
                             )
     bio = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=150, unique=True, blank=False)
+    # думаю, можно наследовать базовое поле, так как валидатор и всё нужное
+    # username = models.CharField(max_length=150, unique=True, blank=False)
     email = models.EmailField('email address', blank=False, unique=True)
 
     def __str__(self):
