@@ -6,6 +6,7 @@ from django.contrib import admin
 
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = (
+        'pk',
         'username',
         'email',
         'first_name',
