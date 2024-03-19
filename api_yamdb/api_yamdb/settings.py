@@ -115,7 +115,9 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+
+    'PAGE_SIZE': 10,
 }
 
 SIMPLE_JWT = {
@@ -125,3 +127,6 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'custom_auth.CustomUser'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
