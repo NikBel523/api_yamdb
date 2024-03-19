@@ -4,17 +4,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, viewsets
 from rest_framework.pagination import PageNumberPagination
 
+from api.filters import TitleFilter
 from api.serializers import (
     CategorySerializer,
     GenreSerializer,
     TitleSerializer,
 )
 from titles.models import Category, Genre, Title
-from api.filters import TitleFilter
+from api.permissions import IsAdminOrReadOnly
 
 # from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
-
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -55,4 +54,4 @@ class TitleViewSet(viewsets.ModelViewSet):
     filterset_class = TitleFilter
     pagination_class = PageNumberPagination
 
-    # permission_classes = (IsAdminOrReadOnly, )
+    permission_classes = (IsAdminOrReadOnly,)
