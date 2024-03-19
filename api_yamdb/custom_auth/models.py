@@ -14,6 +14,7 @@ class CustomUser(AbstractUser):
     # думаю, можно наследовать базовое поле, так как валидатор и всё нужное
     # username = models.CharField(max_length=150, unique=True, blank=False)
     email = models.EmailField('email address', blank=False, unique=True)
+    confirmation_code = models.CharField(max_length=5, unique=True)
 
     def __str__(self):
         return self.username

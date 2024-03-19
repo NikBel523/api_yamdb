@@ -2,7 +2,9 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework.authtoken import views
 
-v1_router = routers.DefaultRouter()
+from custom_auth.views import AuthViewSet, UserViewSet, UserProfileViewSet
+
+#v1_router = routers.DefaultRouter()
 
 """
 v1_router.register('auth', AuthViewSet, basename='auth')
@@ -17,8 +19,14 @@ v1_router.register(
     r'review/(?P<review_id>\d+)/comments',
     CommentViewSet, basename='comments')
 """
+#v1_router.register('users', UserViewSet, basename='users')
+
 
 urlpatterns = [
-    path('v1/', include(v1_router.urls)),
-    # path('v1/api-token-auth/', views.obtain_auth_token),
+    #path('v1/', include(v1_router.urls)),
+    path('v1/auth/signup/', UserViewSet),
+    path('v1/auth/token/', AuthViewSet),
+    path('v1/users/', UserViewSet),
+    path('v1/users/me/', UserProfileViewSet),
+    #path('v1/api-token-auth/', views.obtain_auth_token),
 ]
