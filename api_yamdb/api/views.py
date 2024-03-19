@@ -1,9 +1,19 @@
-from api.serializers import CategorySerializer, GenreSerializer
 # from django.shortcuts import get_object_or_404
+
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, viewsets
 from rest_framework.pagination import PageNumberPagination
+
+from api.filters import TitleFilter
+from api.serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    TitleSerializer,
+)
+from titles.models import Category, Genre, Title
+from api.permissions import IsAdminOrReadOnly
+
 # from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from titles.models import Category, Genre
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -35,3 +45,13 @@ class GenreViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         raise exceptions.MethodNotAllowed(method='get')
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+    pagination_class = PageNumberPagination
+
+    permission_classes = (IsAdminOrReadOnly,)
