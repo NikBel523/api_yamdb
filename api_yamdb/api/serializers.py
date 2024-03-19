@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from titles.models import Category, Comment, Genre, Review, Title, GenreTitle
-from rest_framework.exceptions import ValidationError
+
+from titles.models import Category, Comment, Genre, GenreTitle, Review, Title
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
