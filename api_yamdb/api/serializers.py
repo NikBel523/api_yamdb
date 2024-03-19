@@ -1,3 +1,5 @@
+from datetime import datetime as dt
+
 from rest_framework import serializers
 
 from titles.models import Category, Comment, Genre, GenreTitle, Review, Title
@@ -77,3 +79,15 @@ class TitleSerializer(serializers.ModelSerializer):
             GenreTitle.objects.create(genre=genre, title=title)
 
         return title
+
+    def validate_year(self, value):
+        if value > dt.now().year:
+            raise serializers.ValidationError(
+                'Год выпуска произведения не может быть больше текущего года.'
+            )
+
+    def validate_name(self, value):
+        if len(value) > 256:
+            raise serializers.ValidationError(
+                'Слишком длинное название.'
+            )
