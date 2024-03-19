@@ -7,6 +7,10 @@ class Category(models.Model):
     name = models.CharField('Имя категории', max_length=256)
     slug = models.SlugField(unique=True, max_length=50)
 
+    class Meta:
+        # нужно для повторяемости результата, особенно при пагинации
+        ordering = ('slug', )
+
     def __str__(self):
         return self.name
 
@@ -14,6 +18,10 @@ class Category(models.Model):
 class Genre(models.Model):
     name = models.CharField('Имя жанра', max_length=256)
     slug = models.SlugField(unique=True, max_length=50)
+
+    class Meta:
+        # нужно для повторяемости результата, особенно при пагинации
+        ordering = ('slug', )
 
     def __str__(self):
         return self.name
@@ -29,6 +37,10 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre, through='GenreTitle')
+
+    class Meta:
+        # нужно для повторяемости результата, особенно при пагинации
+        ordering = ('category__slug', )
 
     def __str__(self):
         return self.name

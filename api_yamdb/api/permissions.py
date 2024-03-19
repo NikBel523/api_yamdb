@@ -1,13 +1,22 @@
-from django.contrib.auth import get_user_model
-from rest_framework.permissions import (
-    SAFE_METHODS,
-    BasePermission,
-    # IsAuthenticatedOrReadOnly
-)
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
-EDIT_ACTIONS = ('update', 'partial_update', 'destroy')
+MANAGE_METHODS = ('POST', 'DELETE')
 
-user = get_user_model()
+
+class ManagesOnlyAdmin(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if request.method == 'POST':
+            return hasattr(user, 'role') and user.role == 'admin'
+
+        return user.is_authenticated or request.method in SAFE_METHODS
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if request.method in MANAGE_METHODS:
+            return hasattr(user, 'role') and user.role == 'admin'
+
+        return user.is_authenticated or request.method in SAFE_METHODS
 
 
 class IsAdminOrReadOnly(BasePermission):

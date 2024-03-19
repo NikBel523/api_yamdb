@@ -1,7 +1,6 @@
 from datetime import datetime as dt
 
 from rest_framework import serializers
-
 from titles.models import Category, Comment, Genre, GenreTitle, Review, Title
 
 
