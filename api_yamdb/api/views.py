@@ -1,5 +1,5 @@
 from api.filters import TitleFilter
-from api.permissions import IsAdminOrReadOnly, ManagesOnlyAdmin
+from api.permissions import ManagesOnlyAdmin
 from api.serializers import (CategorySerializer, GenreSerializer,
                              TitleSerializer)
 from django_filters.rest_framework import DjangoFilterBackend
@@ -48,4 +48,4 @@ class TitleViewSet(viewsets.ModelViewSet):
     filterset_class = TitleFilter
     pagination_class = PageNumberPagination
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (ManagesOnlyAdmin,)
