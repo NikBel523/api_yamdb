@@ -1,11 +1,12 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from api.filters import TitleFilter
-from api.permissions import IsAdminOrReadOnly, ManagesOnlyAdmin
+from api.permissions import ManagesOnlyAdmin
 from api.serializers import (
     CategorySerializer,
     GenreSerializer,
@@ -13,7 +14,6 @@ from api.serializers import (
     TitleSerializer,
 )
 from titles.models import Category, Genre, Review, Title
-
 
 User = get_user_model()
 
@@ -57,18 +57,16 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
     pagination_class = PageNumberPagination
-
-    permission_classes = (IsAdminOrReadOnly,)
+    http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
+    permission_classes = (ManagesOnlyAdmin,)
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
-    # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    filter_backends = (DjangoFilterBackend,)
-    # filterset_class = ReviewFilter
     pagination_class = PageNumberPagination
-
-    # permission_classes = (IsAdminOrReadOnly,)
+    http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
+    # TODO
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_title(self):
         return get_object_or_404(Title, id=self.kwargs['title_id'])
@@ -82,6 +80,6 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(
             # TODO заменить 'bingobongo' на self.request.user
-            author=User.objects.get(username='bingobongo'),
+            author=User.objects.get(username=self.request.user),
             title=self.get_title(),
         )
