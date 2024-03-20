@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-#from api_yamdb.custom_auth.models import CustomUser
+# from api_yamdb.custom_auth.models import CustomUser
 
 User = get_user_model()
 

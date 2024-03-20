@@ -1,14 +1,19 @@
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
-from django.core.mail import EmailMessage
-from django.core.mail.backends.filebased import EmailBackend
-from rest_framework import permissions, viewsets, mixins
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt import tokens
-from custom_auth.serializers import ConfirmationCodeSerializer, UserSerializer, UserProfileSerializer
-import string
 import random
+import string
+
+from django.contrib.auth import get_user_model
+from django.core.mail import EmailMessage
+# from django.core.mail.backends.filebased import EmailBackend
+# from django.shortcuts import get_object_or_404
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.response import Response
+from rest_framework_simplejwt import tokens
+
+from custom_auth.serializers import (
+    ConfirmationCodeSerializer,
+    UserProfileSerializer,
+    UserSerializer,
+)
 
 User = get_user_model()
 
@@ -28,10 +33,13 @@ def send_confirmation_email(email, confirmation_code):
     email.send()
 
 
-class UserViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class UserViewSet(
+        mixins.CreateModelMixin,
+        mixins.ListModelMixin,
+        viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -42,7 +50,10 @@ class UserViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.Gener
         user.save()
         send_confirmation_email(user.email, confirmation_code)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers)
 
 
 class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -56,17 +67,22 @@ class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         confirmation_code = serializer.validated_data['confirmation_code']
         user = User.objects.filter(confirmation_code=confirmation_code)
         if user is None:
-            return Response({'error': 'Неверный код подтверждения'}, status=status.HTTP_400_BAD_REQUEST)
-        token = self.generate_token(user)  # здесь должна быть функция генерации токена
+            return Response(
+                {'error': 'Неверный код подтверждения'},
+                status=status.HTTP_400_BAD_REQUEST)
+        # здесь должна быть функция генерации токена
+        token = self.generate_token(user)
         headers = self.get_success_headers(serializer.data)
-        return Response({'token': token}, status=status.HTTP_200_OK, headers=headers)
+        return Response(
+            {'token': token},
+            status=status.HTTP_200_OK, headers=headers)
 
     def generate_token(user):
         return tokens.AccessToken.for_user(user).access_token
 
 
 class UserProfileViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
-    #queryset = User.objects.all()
+    # queryset = User.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -75,7 +91,9 @@ class UserProfileViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data, instance=user)
         serializer.is_valid(raise_exception=True)
         if user != serializer.instance:
-            return Response({'error': 'Вы не можете изменять профиль другого пользователя'}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {'error': 'Вы не можете изменять профиль другого пользователя'},
+                status=status.HTTP_403_FORBIDDEN)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 # class UserViewSet(mixins.CreateModelMixin,
@@ -102,4 +120,4 @@ class UserProfileViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     #     if user:
     #         return Response({'confirmation_code': 'your_confirmation_code'})
     #     else:
-    #         return Response({'error': 'User with this email does not exist.'})
+    # return Response({'error': 'User with this email does not exist.'})
