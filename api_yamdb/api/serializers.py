@@ -84,9 +84,11 @@ class TitleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Год выпуска произведения не может быть больше текущего года.'
             )
+        return value
 
     def validate_name(self, value):
         if len(value) > 256:
             raise serializers.ValidationError(
                 'Слишком длинное название.'
             )
+        return value
