@@ -2,7 +2,8 @@ from django.urls import include, path
 from rest_framework import routers
 
 from api.views import CategoryViewSet, GenreViewSet, TitleViewSet
-from custom_auth.views import AuthViewSet, UserProfileViewSet, UserViewSet
+from custom_auth.views import AuthViewSet, UserViewSet
+from custom_auth.views2 import UserProfileViewSet
 
 v1_router = routers.DefaultRouter()
 

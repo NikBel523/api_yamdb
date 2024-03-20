@@ -13,11 +13,10 @@ class CustomUser(AbstractUser):
                                      ('moderator', 'moderator'))
                             )
     bio = models.TextField(blank=True, null=True)
-    # думаю, можно наследовать базовое поле, так как валидатор и всё нужное
-    # username = models.CharField(max_length=150, unique=True, blank=False)
     email = models.EmailField('email address', blank=False, unique=True)
     confirmation_code = models.CharField(
         max_length=5, unique=True, blank=True, null=True)
+    password = models.CharField('password', max_length=128, blank=True, null=True)
 
     def __str__(self):
         return self.username
