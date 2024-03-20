@@ -6,14 +6,14 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from api.filters import TitleFilter
-from api.permissions import ManagesOnlyAdmin
+from api.permissions import ManagesOnlyAdmin, IsReviewPatcherOrReadOnly
 from api.serializers import (
     CategorySerializer,
     GenreSerializer,
     ReviewSerializer,
     TitleSerializer,
 )
-from reviews.models import Category, Genre, Review, Title
+from reviews.models import Category, Genre, Title
 
 User = get_user_model()
 
@@ -65,8 +65,8 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
-    # TODO
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    permission_classes = (IsAuthenticatedOrReadOnly, IsReviewPatcherOrReadOnly)
 
     def get_title(self):
         return get_object_or_404(Title, id=self.kwargs['title_id'])

@@ -68,6 +68,9 @@ class Review(models.Model):
         'Дата публикации', auto_now_add=True, db_index=True
     )
 
+    class Meta:
+        unique_together = ['author', 'title']
+
 
 class Comment(models.Model):
     author = models.ForeignKey(

@@ -1,6 +1,5 @@
 from datetime import datetime as dt
-from rest_framework.validators import UniqueTogetherValidator
-from django.shortcuts import get_object_or_404
+
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
 
@@ -32,9 +31,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        # fields = '__all__'
-        fields = ('id', 'text', 'author', 'score', 'title', 'pub_date')
-        read_only_fields = ('title', )
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
 
     def validate(self, attrs):
         method = self.context['request'].method
@@ -48,13 +45,6 @@ class ReviewSerializer(serializers.ModelSerializer):
                 )
                 if existing_reviews.exists():
                     raise serializers.ValidationError('Отзыв уже есть.')
-        # if method == 'PATCH':
-        #     review_id = self.context['view'].kwargs.get('review_id')
-        #     review = get_object_or_404(Review, id=review_id)
-        #     if current_user != review.author:
-        #         raise serializers.ValidationError('Нельзя менять чужой отзыв.')
-            
-
         return attrs
 
 
