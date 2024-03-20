@@ -1,7 +1,12 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from api.views import CategoryViewSet, GenreViewSet, TitleViewSet
+from api.views import (
+    CategoryViewSet,
+    GenreViewSet,
+    ReviewsViewSet,
+    TitleViewSet,
+)
 from custom_auth.views import AuthViewSet, UserViewSet
 from custom_auth.views2 import UserProfileViewSet
 
@@ -26,6 +31,9 @@ v1_router.register(
 v1_router.register('categories', CategoryViewSet, basename='categories')
 v1_router.register('genres', GenreViewSet, basename='genres')
 v1_router.register('titles', TitleViewSet, basename='titles')
+v1_router.register(
+    r'titles/(?P<title_id>\d+)/reviews',
+    ReviewsViewSet, basename='reviews')
 
 """
 actionsMap = {

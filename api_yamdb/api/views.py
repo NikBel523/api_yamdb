@@ -1,11 +1,21 @@
-from api.filters import TitleFilter
-from api.permissions import ManagesOnlyAdmin
-from api.serializers import (CategorySerializer, GenreSerializer,
-                             TitleSerializer)
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, viewsets
 from rest_framework.pagination import PageNumberPagination
-from titles.models import Category, Genre, Title
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+from api.filters import TitleFilter
+from api.permissions import ManagesOnlyAdmin
+from api.serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    ReviewSerializer,
+    TitleSerializer,
+)
+from reviews.models import Category, Genre, Review, Title
+
+User = get_user_model()
 
 
 class AdminManagebleMixin:
@@ -49,3 +59,27 @@ class TitleViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
     permission_classes = (ManagesOnlyAdmin,)
+
+
+class ReviewsViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+    pagination_class = PageNumberPagination
+    http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
+    # TODO
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_title(self):
+        return get_object_or_404(Title, id=self.kwargs['title_id'])
+
+    def get_queryset(self):
+        # Добавляю .all() что бы певратить объект RelatedManager в QuerySet
+        # Это обеспечивает работу пагинатора, который не может в RelatedManager
+        # RelatedManager не работает для слайсов и индексации
+        return self.get_title().reviews.all()
+
+    def perform_create(self, serializer):
+        serializer.save(
+            # TODO заменить 'bingobongo' на self.request.user
+            author=User.objects.get(username=self.request.user),
+            title=self.get_title(),
+        )
