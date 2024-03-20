@@ -1,21 +1,35 @@
-from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.response import Response
+from rest_framework import exceptions, filters, viewsets
+from rest_framework.pagination import PageNumberPagination
 
+from custom_auth.models import CustomUser
+from custom_auth.permissions import IsAdmin
 from custom_auth.serializer2 import UserProfileSerializer
 
 
-class UserProfileViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
-    # queryset = User.objects.all()
+class UserProfileViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdmin,)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+    queryset = CustomUser.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('=username',)
+    pagination_class = PageNumberPagination
+    lookup_field = 'username'
 
-    def partial_update(self, request, *args, **kwargs):
-        user = self.request.user
-        serializer = self.get_serializer(data=request.data, instance=user)
-        serializer.is_valid(raise_exception=True)
-        if user != serializer.instance:
-            return Response(
-                {'error': 'Вы не можете изменять профиль другого пользователя'},
-                status=status.HTTP_403_FORBIDDEN)
+    def _is_me(self):
+        return self.kwargs.get('username', None) == 'me'
+
+    def get_object(self):
+        if self._is_me():
+            return CustomUser.objects.get(pk=self.request.user.pk)
+        return super().get_object()
+
+    def destroy(self, request, *args, **kwargs):
+        if self._is_me():
+            raise exceptions.MethodNotAllowed(method='delete')
+        return super().destroy(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        if self._is_me():
+            serializer.validated_data.pop('role', None)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)

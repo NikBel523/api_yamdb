@@ -7,10 +7,17 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api_yamdb.settings")
 django.setup()
 
+from reviews.models import (  # noqa
+    Category,
+    Comment,
+    Genre,
+    GenreTitle,
+    Review,
+    Title,
+)
+
 # эти импорты должны идти после конфигурирования Django, иначе не заработает
 from custom_auth.models import CustomUser  # noqa
-from reviews.models import (Category, Comment, Genre, GenreTitle,  # noqa
-                           Review, Title)
 
 BASE_PATH = './static/data/'
 

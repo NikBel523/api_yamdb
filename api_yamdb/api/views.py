@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from reviews.models import Category, Genre, Title
 
 from api.filters import TitleFilter
 from api.permissions import ManagesOnlyAdmin
@@ -13,7 +14,6 @@ from api.serializers import (
     ReviewSerializer,
     TitleSerializer,
 )
-from reviews.models import Category, Genre, Review, Title
 
 User = get_user_model()
 
@@ -23,9 +23,8 @@ class AdminManagebleMixin:
 
     def partial_update(self, request, *args, **kwargs):
         user = request.user
-        if user.is_authenticated:
-            if user.role != 'admin':
-                raise exceptions.PermissionDenied()
+        if user.is_authenticated and user.role != 'admin':
+            raise exceptions.PermissionDenied()
 
         raise exceptions.MethodNotAllowed(method='patch')
 
