@@ -2,7 +2,7 @@ from datetime import datetime as dt
 from rest_framework.validators import UniqueTogetherValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from titles.models import Category, Comment, Genre, GenreTitle, Review, Title
+from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
 
 
 class CategorySerializer(serializers.ModelSerializer):

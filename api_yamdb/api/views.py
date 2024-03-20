@@ -13,7 +13,7 @@ from api.serializers import (
     ReviewSerializer,
     TitleSerializer,
 )
-from titles.models import Category, Genre, Review, Title
+from reviews.models import Category, Genre, Review, Title
 
 User = get_user_model()
 
