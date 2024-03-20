@@ -9,11 +9,7 @@ from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from custom_auth.serializers import (
-    ConfirmationCodeSerializer,
-    UserProfileSerializer,
-    UserSerializer,
-)
+from custom_auth.serializers import ConfirmationCodeSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -77,4 +73,3 @@ class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return Response(
             {'token': str(token)},
             status=status.HTTP_200_OK, headers=headers)
-

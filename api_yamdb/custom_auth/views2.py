@@ -1,10 +1,8 @@
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.response import Response
-from custom_auth.serializers import (
-    ConfirmationCodeSerializer,
-    UserProfileSerializer,
-    UserSerializer,
-)
+
+from custom_auth.serializer2 import UserProfileSerializer
+
 
 class UserProfileViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     # queryset = User.objects.all()
