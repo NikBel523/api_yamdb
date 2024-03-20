@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework.authtoken',
     'custom_auth',
-    'titles',
+    'reviews',
     'api',
 ]
 

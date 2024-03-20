@@ -9,7 +9,7 @@ django.setup()
 
 # эти импорты должны идти после конфигурирования Django, иначе не заработает
 from custom_auth.models import CustomUser  # noqa
-from titles.models import (Category, Comment, Genre, GenreTitle,  # noqa
+from reviews.models import (Category, Comment, Genre, GenreTitle,  # noqa
                            Review, Title)
 
 BASE_PATH = './static/data/'

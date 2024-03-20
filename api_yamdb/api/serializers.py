@@ -1,7 +1,8 @@
 from datetime import datetime as dt
-
+from rest_framework.validators import UniqueTogetherValidator
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from titles.models import Category, Comment, Genre, GenreTitle, Review, Title
+from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -31,8 +32,30 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ('id', 'text', 'author', 'score', 'title', 'pub_date')
         read_only_fields = ('title', )
+
+    def validate(self, attrs):
+        method = self.context['request'].method
+        current_user = self.context['request'].user
+        title_id = self.context['view'].kwargs.get('title_id')
+        if method == 'POST':
+            if title_id is not None:
+                existing_reviews = Review.objects.filter(
+                    author=current_user,
+                    title=title_id,
+                )
+                if existing_reviews.exists():
+                    raise serializers.ValidationError('Отзыв уже есть.')
+        # if method == 'PATCH':
+        #     review_id = self.context['view'].kwargs.get('review_id')
+        #     review = get_object_or_404(Review, id=review_id)
+        #     if current_user != review.author:
+        #         raise serializers.ValidationError('Нельзя менять чужой отзыв.')
+            
+
+        return attrs
 
 
 class CommentSerializer(serializers.ModelSerializer):
