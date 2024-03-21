@@ -11,13 +11,13 @@
 
 1. Взятие исходников из репозитория:
 
-  `git clone git@github.com:alexf2/api_yamdb.git` или
+    `git clone git@github.com:alexf2/api_yamdb.git` или
 
-  `git clone https://github.com/alexf2/api_yamdb.git`.
+    `git clone https://github.com/alexf2/api_yamdb.git`.
 
 2. Перехдим в корень проекта:
 
-`cd api_yamdb`.
+  `cd api_yamdb`.
 
 3. Создаём виртуальное окружение:
 
@@ -26,37 +26,37 @@
 
 4. Активируем созданное виртуальное окружение:
 
-  Windows: `venv/Scripts/activate`;
+    Windows: `venv/Scripts/activate`;
 
-  Linux: `source env/bin/activate`.
+    Linux: `source env/bin/activate`.
 
 5. Опциально обновляем pip:
 
-`python3 -m pip install --upgrade pip`.
+    `python3 -m pip install --upgrade pip`.
 
 6. Ставим зависимости:
 
-`cd ./yatube_api`;
+    `cd ./yatube_api`;
 
-`pip install -r requirements.txt`.
+    `pip install -r requirements.txt`.
 
 7. Добавляем супер-пользователя.
 
-`python manage.py createsuperuser`.
+    `python manage.py createsuperuser`.
 
 8. Накатываем миграции:
 
-`python manage.py migrate`.
+    `python manage.py migrate`.
 
 9. Заливаем тестовые данные:
 
-`cd api_yamdb`
+    `cd api_yamdb`
 
-`python import_csv.py`
+    `python import_csv.py`
 
 10. Стартуем сервис:
 
-`python3 manage.py runserver`.
+    `python3 manage.py runserver`.
 
 ### Swagger для Api
 
@@ -64,30 +64,30 @@
 
 ### Регистрация пользователя
 
-`POST /api/v1/auth/signup/`
+    `POST /api/v1/auth/signup/`
 в теле:
 
 ```json
 {
-  "email": "user@example.com",
-  "username": "string"
+    "email": "user@example.com",
+    "username": "string"
 }
 ```
 
 В результате на почту приходит код. Далее, по коду нужно получить JWT-токен.
-`POST /api/v1/auth/tiken/`
+    `POST /api/v1/auth/tiken/`
 в теле:
 
 ```json
 {
   
-"username": "string",
-"confirmation_code": "string"
+    "username": "string",
+    "confirmation_code": "string"
 }
 ```
 
 С токеном можно получить свой профайл:
-`GET /api/v1/users/me`
+    `GET /api/v1/users/me`
 В http-header передать токен:
 
 ```
