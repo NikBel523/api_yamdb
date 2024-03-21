@@ -15,46 +15,46 @@
 
   `git clone https://github.com/alexf2/api_yamdb.git`.
 
-1. Перехдим в корень проекта:
+2. Перехдим в корень проекта:
 
 `cd api_yamdb`.
 
-1. Создаём виртуальное окружение:
+3. Создаём виртуальное окружение:
 
       **Важно!** Должен быть установлен Python 3.9.
       `python3 -m venv venv`
 
-1. Активируем созданное виртуальное окружение:
+4. Активируем созданное виртуальное окружение:
 
   Windows: `venv/Scripts/activate`;
 
   Linux: `source env/bin/activate`.
 
-1. Опциально обновляем pip:
+5. Опциально обновляем pip:
 
 `python3 -m pip install --upgrade pip`.
 
-1. Ставим зависимости:
+6. Ставим зависимости:
 
 `cd ./yatube_api`;
 
 `pip install -r requirements.txt`.
 
-1. Добавляем супер-пользователя.
+7. Добавляем супер-пользователя.
 
 `python manage.py createsuperuser`.
 
-1. Накатываем миграции:
+8. Накатываем миграции:
 
 `python manage.py migrate`.
 
-1. Заливаем тестовые данные:
+9. Заливаем тестовые данные:
 
 `cd api_yamdb`
 
 `python import_csv.py`
 
-1. Стартуем сервис:
+10. Стартуем сервис:
 
 `python3 manage.py runserver`.
 
