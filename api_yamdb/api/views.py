@@ -10,6 +10,7 @@ from api.filters import TitleFilter
 from api.permissions import ManagesOnlyAdmin, IsReviewPatcherOrReadOnly
 from api.serializers import (
     CategorySerializer,
+    CommentSerializer,
     GenreSerializer,
     ReviewSerializer,
     TitleSerializer,
@@ -79,7 +80,26 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(
-            # TODO заменить 'bingobongo' на self.request.user
-            author=User.objects.get(username=self.request.user),
+            author=self.request.user,
             title=self.get_title(),
+        )
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = (IsAuthenticatedOrReadOnly, IsReviewPatcherOrReadOnly)
+    http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
+
+    def get_specific_review(self):
+        title = get_object_or_404(Title, id=self.kwargs['title_id'])
+        return title.reviews.get(pk=self.kwargs['review_id'])
+
+    def get_queryset(self):
+        return self.get_specific_review().comments.all()
+
+    def perform_create(self, serializer):
+        serializer.save(
+            author=self.request.user,
+            review=self.get_specific_review(),
         )
