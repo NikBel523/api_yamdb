@@ -81,7 +81,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(
             # TODO заменить 'bingobongo' на self.request.user
-            author=User.objects.get(username=self.request.user),
+            author=self.request.user,
             title=self.get_title(),
         )
 
@@ -102,6 +102,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(
             # TODO заменить 'bingobongo' на self.request.user
-            author=User.objects.get(username=self.request.user),
+            author=self.request.user,
             review=self.get_specific_review(),
         )
