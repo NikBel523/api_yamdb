@@ -2,6 +2,7 @@ import random
 import string
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from rest_framework import serializers
 
@@ -24,6 +25,7 @@ def send_confirmation_email(email, confirmation_code):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # last_name = serializers.CharField(max_length=150, blank=True)
 
     class Meta:
         model = User
@@ -37,12 +39,19 @@ class UserSerializer(serializers.ModelSerializer):
         send_confirmation_email(user.email, confirmation_code)
         return user
 
+    def validate_last_name(self, value):
+        if len(value) > 150:
+            raise ValidationError(detail='Слишком длинная фамилия.', code='last_name_too_long')
+        return value
+
+    def validate_first_name(self, value):
+        if len(value) > 150:
+            raise ValidationError(detail='Слишком длинное имя.', code='first_name_too_long')
+        return value
+
 
 class ConfirmationCodeSerializer(serializers.Serializer):
 
     class Meta:
         model = User
         fields = ('confirmation_code',)
-
-
-

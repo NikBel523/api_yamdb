@@ -8,11 +8,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.views import TokenViewBase
 
 from custom_auth.serializers import (
     ConfirmationCodeSerializer,
-    UserProfileSerializer,
-    UserSerializer,
+    UserSerializer
 )
 
 User = get_user_model()
@@ -49,7 +49,7 @@ class UserViewSet(
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        serializer.save()
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data,
@@ -57,7 +57,11 @@ class UserViewSet(
             headers=headers)
 
 
-class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class MyTokenObtainPairView(TokenViewBase):
+    pass
+
+
+class AuthViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = ConfirmationCodeSerializer
     permission_classes = [permissions.AllowAny]
@@ -67,10 +71,21 @@ class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         confirmation_code = serializer.initial_data.get('confirmation_code')
         user = get_object_or_404(User, confirmation_code=confirmation_code)
+        username = user.get_username()
+        print(username)
         if user is None:
             return Response(
                 {'error': 'Неверный код подтверждения'},
                 status=status.HTTP_400_BAD_REQUEST)
+        try:
+            username = request.data['username']
+            print(username)
+            User.objects.get(username=username)
+            print(User.objects.get(username=username))
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Пользователь с таким именем не существует'},
+                status=status.HTTP_404_NOT_FOUND)
         token = generate_token(user)
         headers = self.get_success_headers(serializer.data)
         print(headers)
@@ -78,3 +93,5 @@ class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             {'token': str(token)},
             status=status.HTTP_200_OK, headers=headers)
 
+
+obtain_auth_token = AuthViewSet

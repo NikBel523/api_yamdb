@@ -16,7 +16,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField('email address', blank=False, unique=True)
     confirmation_code = models.CharField(
         max_length=5, unique=True, blank=True, null=True)
-    password = models.CharField('password', max_length=128, blank=True, null=True)
+    password = None   # models.CharField('password', max_length=128, blank=True, null=True)
 
     def __str__(self):
         return self.username

@@ -1,8 +1,9 @@
 from django.urls import include, path
 from rest_framework import routers
 
+from rest_framework.authtoken import views
 from api.views import CategoryViewSet, GenreViewSet, TitleViewSet
-from custom_auth.views import AuthViewSet, UserViewSet
+from custom_auth.views import AuthViewSet, UserViewSet, MyTokenObtainPairView
 from custom_auth.views2 import UserProfileViewSet
 
 v1_router = routers.DefaultRouter()
@@ -22,7 +23,7 @@ v1_router.register(
 """
 # v1_router.register('users', UserViewSet, basename='users')
 
-
+# v1_router.register('auth', views.obtain_auth_token, basename='auth')
 v1_router.register('categories', CategoryViewSet, basename='categories')
 v1_router.register('genres', GenreViewSet, basename='genres')
 v1_router.register('titles', TitleViewSet, basename='titles')
@@ -38,11 +39,11 @@ actionsMap = {
 
 urlpatterns = [
     path('v1/', include(v1_router.urls)),
-
     path('v1/auth/signup/',
          UserViewSet.as_view({'post': 'create'})),
-    path('v1/auth/token/', AuthViewSet.as_view({'post': 'create'})),
-    path('v1/users/', UserViewSet.as_view({'get': 'list'})),
+    #path('v1/auth/token/', AuthViewSet.as_view({'post': 'create'})),
+    path('v1/users/', UserViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('v1/users/me/', UserProfileViewSet.as_view({'put': 'update'})),
-    # path('v1/api-token-auth/', views.obtain_auth_token),
+    # path('v1/auth/token/', views.obtain_auth_token),
+    path('v1/auth/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
 ]
