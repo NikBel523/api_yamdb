@@ -89,3 +89,6 @@ class Comment(models.Model):
     pub_date = models.DateTimeField(
         'Дата комментария', auto_now_add=True, db_index=True
     )
+
+    class Meta:
+        ordering = ('pub_date', )

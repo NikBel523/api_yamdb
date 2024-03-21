@@ -2,62 +2,9 @@ from datetime import datetime as dt
 
 from django.db.models import Avg
 from rest_framework import serializers
-from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
+from reviews.models import Category, Genre, GenreTitle, Title
 
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ('name', 'slug',)
-        lookup_field = 'slug'
-        extra_kwargs = {
-            'url': {'lookup_field': 'slug'}
-        }
-
-
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genre
-        fields = ('name', 'slug',)
-        lookup_field = 'slug'
-        extra_kwargs = {
-            'url': {'lookup_field': 'slug'}
-        }
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        slug_field='username', read_only=True,
-    )
-
-    class Meta:
-        model = Review
-        fields = ('id', 'text', 'author', 'score', 'pub_date')
-
-    def validate(self, attrs):
-        method = self.context['request'].method
-        current_user = self.context['request'].user
-        title_id = self.context['view'].kwargs.get('title_id')
-        if method == 'POST':
-            if title_id is not None:
-                existing_reviews = Review.objects.filter(
-                    author=current_user,
-                    title=title_id,
-                )
-                if existing_reviews.exists():
-                    raise serializers.ValidationError('Отзыв уже есть.')
-        return attrs
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        slug_field='username', read_only=True,
-    )
-
-    class Meta:
-        model = Comment
-        fields = '__all__'
-        read_only_fields = ('review', )
+from api.serializers.category import CategorySerializer, GenreSerializer
 
 
 class TitleSerializer(serializers.ModelSerializer):

@@ -1,9 +1,9 @@
 from rest_framework import exceptions, filters, viewsets
 from rest_framework.pagination import PageNumberPagination
 
+from api.permissions import IsAdmin
+from api.serializers.user_profile import UserProfileSerializer
 from custom_auth.models import CustomUser
-from custom_auth.permissions import IsAdmin
-from custom_auth.serializer2 import UserProfileSerializer
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
