@@ -1,35 +1,13 @@
-import random
-import string
-
-from django.contrib.auth import get_user_model
-from django.core.mail import EmailMessage
-# from django.core.mail.backends.filebased import EmailBackend
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from custom_auth.serializers import ConfirmationCodeSerializer, UserSerializer
-
-User = get_user_model()
-
-
-def generate_confirmation_code():
-    letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for i in range(5))
+from api.serializers.user import ConfirmationCodeSerializer, UserSerializer
+from custom_auth.models import CustomUser
 
 
-def send_confirmation_email(email, confirmation_code):
-    subject = 'Подтверждение регистрации'
-    message = f'Ваш код подтверждения: {confirmation_code}'
-    from_email = 'no-reply@example.com'
-    to_email = email
-    email = EmailMessage(subject, message, from_email, [to_email])
-    email.content_subtype = 'html'
-    email.send()
-
-
-def generate_token(user):
+def _generate_token(user):
     token = AccessToken.for_user(user)
     return token
 
@@ -38,14 +16,14 @@ class UserViewSet(
         mixins.CreateModelMixin,
         mixins.ListModelMixin,
         viewsets.GenericViewSet):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        serializer.save()
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data,
@@ -54,7 +32,7 @@ class UserViewSet(
 
 
 class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = ConfirmationCodeSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -62,12 +40,13 @@ class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         confirmation_code = serializer.initial_data.get('confirmation_code')
-        user = get_object_or_404(User, confirmation_code=confirmation_code)
+        user = get_object_or_404(
+            CustomUser, confirmation_code=confirmation_code)
         if user is None:
             return Response(
                 {'error': 'Неверный код подтверждения'},
                 status=status.HTTP_400_BAD_REQUEST)
-        token = generate_token(user)
+        token = _generate_token(user)
         headers = self.get_success_headers(serializer.data)
         print(headers)
         return Response(
