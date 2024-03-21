@@ -24,3 +24,4 @@ class CustomUser(AbstractUser):
 
     class Meta:
         swappable = "AUTH_USER_MODEL"
+        ordering = ('username', )

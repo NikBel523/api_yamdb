@@ -1,6 +1,8 @@
-from custom_auth.models import CustomUser
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from custom_auth.models import CustomUser
 
 
 class Category(models.Model):
