@@ -1,16 +1,14 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from reviews.models import Title
 
 from api.permissions import IsReviewPatcherOrReadOnly
 from api.serializers.review import CommentSerializer, ReviewSerializer
+from reviews.models import Title
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    pagination_class = PageNumberPagination
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
 
     permission_classes = (IsAuthenticatedOrReadOnly, IsReviewPatcherOrReadOnly)
@@ -33,7 +31,6 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    pagination_class = PageNumberPagination
     permission_classes = (IsAuthenticatedOrReadOnly, IsReviewPatcherOrReadOnly)
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
 
