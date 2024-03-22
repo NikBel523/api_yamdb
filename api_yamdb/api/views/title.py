@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 
 from api.filters import TitleFilter
-from api.permissions import ManagesOnlyAdmin
+from api.permissions import AdminOrReadOnly
 from api.serializers.title import TitleSerializer
 from reviews.models import Title
 
@@ -13,4 +13,4 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
-    permission_classes = (ManagesOnlyAdmin,)
+    permission_classes = (AdminOrReadOnly,)
