@@ -4,13 +4,12 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from api.permissions import IsReviewPatcherOrReadOnly
 from api.serializers.review import CommentSerializer, ReviewSerializer
-from reviews.models import Title
+from reviews.models import Title, Review
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
-
     permission_classes = (IsAuthenticatedOrReadOnly, IsReviewPatcherOrReadOnly)
 
     def get_title(self):
@@ -34,15 +33,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, IsReviewPatcherOrReadOnly)
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
 
-    def get_specific_review(self):
-        title = get_object_or_404(Title, id=self.kwargs['title_id'])
-        return title.reviews.get(pk=self.kwargs['review_id'])
+    def get_review(self):
+        return get_object_or_404(Review, id=self.kwargs['review_id'])
 
     def get_queryset(self):
-        return self.get_specific_review().comments.all()
+        return self.get_review().comments.all()
 
     def perform_create(self, serializer):
         serializer.save(
             author=self.request.user,
-            review=self.get_specific_review(),
+            review=self.get_review(),
         )
