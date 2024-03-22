@@ -51,8 +51,7 @@ class Title(models.Model):
         related_name='titles', blank=False, null=False
     )
     # TODO замечание из ревью не исправил
-    genre = models.ManyToManyField(
-        Genre, through='GenreTitle')
+    genre = models.ManyToManyField(Genre)
 
     class Meta:
         # нужно для повторяемости результата, особенно при пагинации
@@ -60,14 +59,6 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class GenreTitle(models.Model):
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.genre} {self.title}'
 
 
 class Review(models.Model):
