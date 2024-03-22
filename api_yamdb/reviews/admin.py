@@ -13,7 +13,7 @@ class ReviewsAdmin(admin.ModelAdmin):
     list_filter = ('category',)
     list_display_links = ('name',)
     empty_value_display = '-пусто-'
-    filter_horizontal = ('genre',)
+    # filter_horizontal = ('genre',)
 
 
 class TitleInline(admin.StackedInline):

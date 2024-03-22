@@ -1,10 +1,10 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
 
 # Суперюзер: login: super /EMail: super@fake.com /pwd: yandex22.
 
 
-class CustomUser(AbstractUser):
+class YamUser(AbstractUser):
     """Модель пользователя."""
     role = models.CharField(max_length=20,
                             default='user',

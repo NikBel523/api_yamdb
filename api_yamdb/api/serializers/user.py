@@ -1,14 +1,15 @@
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
-from custom_auth.models import CustomUser
+_User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = CustomUser
+        model = _User
         fields = '__all__'
 
     def validate_last_name(self, value):
@@ -29,5 +30,5 @@ class UserSerializer(serializers.ModelSerializer):
 class ConfirmationCodeSerializer(serializers.Serializer):
 
     class Meta:
-        model = CustomUser
+        model = _User
         fields = ('confirmation_code',)

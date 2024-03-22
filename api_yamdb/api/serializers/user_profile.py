@@ -1,15 +1,16 @@
 import re
 
+from django.contrib.auth import get_user_model
 from django.forms import ValidationError
 from rest_framework import serializers
 
-from custom_auth.models import CustomUser
+_User = get_user_model()
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = CustomUser
+        model = _User
         fields = [
             'last_name',
             'first_name',
