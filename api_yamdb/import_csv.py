@@ -1,4 +1,4 @@
-
+# flake8: noqa
 import csv
 import os
 
@@ -7,7 +7,7 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api_yamdb.settings")
 django.setup()
 
-from reviews.models import (  # noqa
+from reviews.models import (  # noqa: E402
     Category,
     Comment,
     Genre,
@@ -17,7 +17,7 @@ from reviews.models import (  # noqa
 )
 
 # эти импорты должны идти после конфигурирования Django, иначе не заработает
-from custom_auth.models import CustomUser  # noqa
+from custom_auth.models import CustomUser  # noqa: E402
 
 BASE_PATH = './static/data/'
 
