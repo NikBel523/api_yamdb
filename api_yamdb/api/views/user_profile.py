@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import exceptions, filters, viewsets
 
 from api.permissions import IsAdmin
-from api.serializers.user_profile import UserProfileSerializer
+from api.serializers import UserProfileSerializer
 
 _User = get_user_model()
 

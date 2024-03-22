@@ -3,7 +3,7 @@ from rest_framework import viewsets
 
 from api.filters import TitleFilter
 from api.permissions import AdminOrReadOnly
-from api.serializers.title import TitleSerializer
+from api.serializers import TitleSerializer
 from reviews.models import Title
 
 

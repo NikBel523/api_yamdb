@@ -1,11 +1,16 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from api.views.category import CategoryViewSet, GenreViewSet
-from api.views.review import CommentViewSet, ReviewsViewSet
-from api.views.title import TitleViewSet
-from api.views.user import ObtainTokenView, SingUpViewSet
-from api.views.user_profile import UserProfileViewSet
+from api.views import (
+    CategoryViewSet,
+    CommentViewSet,
+    GenreViewSet,
+    ObtainTokenView,
+    ReviewsViewSet,
+    SingUpViewSet,
+    TitleViewSet,
+    UserProfileViewSet,
+)
 
 _v1_router = routers.DefaultRouter()
 
@@ -13,7 +18,7 @@ _v1_router.register('categories', CategoryViewSet, basename='categories')
 _v1_router.register('genres', GenreViewSet, basename='genres')
 _v1_router.register('titles', TitleViewSet, basename='titles')
 _v1_router.register('users', UserProfileViewSet, basename='users')
-# TODO нужно применить DRY? воможно через NestedSimpleRouter
+
 _v1_router.register(
     r'titles/(?P<title_id>\d+)/reviews',
     ReviewsViewSet, basename='reviews')

@@ -10,7 +10,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenViewBase
 
-from api.serializers.user import ConfirmationCodeSerializer, UserSerializer
+from api.serializers import ConfirmationCodeSerializer, UserSerializer
 
 _User = get_user_model()
 

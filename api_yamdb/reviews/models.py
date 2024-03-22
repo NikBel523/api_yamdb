@@ -15,7 +15,10 @@ _User = get_user_model()
 
 
 class BaseTagModel(models.Model):
-    slug = models.SlugField(unique=True, max_length=MAX_SLUG_LENGTH)
+    slug = models.SlugField(
+        unique=True,
+        max_length=MAX_SLUG_LENGTH,
+        db_index=True)
 
     class Meta:
         abstract = True
