@@ -3,6 +3,7 @@ import csv
 import os
 
 import django
+from django.contrib.auth import get_user_model
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api_yamdb.settings")
 django.setup()
@@ -17,15 +18,15 @@ from reviews.models import (  # noqa: E402
 )
 
 # эти импорты должны идти после конфигурирования Django, иначе не заработает
-from custom_auth.models import CustomUser  # noqa: E402
 
 BASE_PATH = './static/data/'
 
+_User = get_user_model()
 
 MAPPING = [
     {
         'table_csv': 'users',
-        'model': CustomUser,
+        'model': _User,
     },
     {
         'table_csv': 'category',

@@ -1,8 +1,9 @@
 
+from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from custom_auth.models import CustomUser
+_User = get_user_model()
 
 
 class Category(models.Model):
@@ -58,7 +59,7 @@ class GenreTitle(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name='reviews'
+        _User, on_delete=models.CASCADE, related_name='reviews'
     )
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
@@ -77,7 +78,7 @@ class Review(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name='comments'
+        _User, on_delete=models.CASCADE, related_name='comments'
     )
 
     review = models.ForeignKey(

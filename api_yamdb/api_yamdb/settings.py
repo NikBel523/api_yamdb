@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework.authtoken',
-    'custom_auth',
+    'yam_auth',
     'reviews',
     'api',
 ]
@@ -126,7 +126,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-AUTH_USER_MODEL = 'custom_auth.CustomUser'
+AUTH_USER_MODEL = 'yam_auth.YamUser'
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 

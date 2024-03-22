@@ -1,6 +1,7 @@
 import random
 import string
 
+from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from rest_framework import mixins, serializers, status, viewsets
 from rest_framework.request import Request
@@ -10,7 +11,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenViewBase
 
 from api.serializers.user import ConfirmationCodeSerializer, UserSerializer
-from custom_auth.models import CustomUser
+
+_User = get_user_model()
 
 
 def _generate_confirmation_code():
@@ -35,12 +37,12 @@ def _generate_token(user):
 class SingUpViewSet(
         mixins.CreateModelMixin,
         viewsets.GenericViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = _User.objects.all()
     serializer_class = UserSerializer
 
     def create(self, request):
         self._validate_request()
-        user = CustomUser.objects.filter(
+        user = _User.objects.filter(
             username=request.data['username'])
 
         return self._process_existing_user(
@@ -110,8 +112,8 @@ class ObtainTokenView(TokenViewBase):
         user = None
         try:
             username = request.data['username']
-            user = CustomUser.objects.get(username=username)
-        except CustomUser.DoesNotExist:
+            user = _User.objects.get(username=username)
+        except _User.DoesNotExist:
             return Response(
                 {'error': 'Пользователь с таким именем не существует'},
                 status=status.HTTP_404_NOT_FOUND)
