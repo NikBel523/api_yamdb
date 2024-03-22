@@ -1,12 +1,12 @@
 from rest_framework import exceptions, filters, viewsets
 
-from api.permissions import ManagesOnlyAdmin
+from api.permissions import AdminOrReadOnly
 from api.serializers.category import CategorySerializer, GenreSerializer
 from reviews.models import Category, Genre
 
 
 class _AdminManagebleMixin:
-    permission_classes = (ManagesOnlyAdmin,)
+    permission_classes = (AdminOrReadOnly,)
 
     def partial_update(self, request, *args, **kwargs):
         user = request.user

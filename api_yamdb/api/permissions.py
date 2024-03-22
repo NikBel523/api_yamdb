@@ -1,32 +1,27 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
-_MANAGE_METHODS = ('POST', 'DELETE', 'PATCH')
 
-
-class ManagesOnlyAdmin(BasePermission):
+class AdminOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         user = request.user
-        if request.method in _MANAGE_METHODS:
-            return hasattr(user, 'role') and user.role == 'admin'
 
-        return user.is_authenticated or request.method in SAFE_METHODS
-
-    def has_object_permission(self, request, view, obj):
-        user = request.user
-        if request.method in _MANAGE_METHODS:
-            return hasattr(user, 'role') and user.role == 'admin'
-
-        return user.is_authenticated or request.method in SAFE_METHODS
-
-
-class IsReviewPatcherOrReadOnly(BasePermission):
-
-    def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
 
-        return (obj.author == request.user
-                or request.user.role in ('moderator', 'admin'))
+        if user.is_authenticated:
+            return hasattr(user, 'role') and user.role == 'admin'
+
+        return False
+
+
+class IsReviewPatcherOrReadOnly(BasePermission):
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS or request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        return request.method in SAFE_METHODS or (
+            obj.author == request.user or request.user.role
+            in ('moderator', 'admin'))
 
 
 class IsAdmin(BasePermission):
@@ -44,8 +39,10 @@ class IsAdmin(BasePermission):
         return not view.request.user.is_anonymous and view.kwargs.get(
             'username', None) == 'me'
 
+    # избавиться от id_me не получится, так как у нас нет маршрута users/me
+    # весь корень обслуживается одной вьюшкой
+    # 'auth/signup/', SingUpViewSet.as_view({'post': 'create'})
     def has_permission(self, request, view):
-        return self._is_admin(request) or self._is_me(view)
-
-    def has_object_permission(self, request, view, obj):
-        return self._is_admin(request) or self._is_me(view)
+        user = request.user
+        return user.is_authenticated and (self._is_admin(
+            request) or self._is_me(view))

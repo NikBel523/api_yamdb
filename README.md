@@ -52,7 +52,7 @@
 
     `cd api_yamdb`
 
-    `python import_csv.py`
+    `python manage.py populate_db`
 
 10. Стартуем сервис:
 
