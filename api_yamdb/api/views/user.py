@@ -1,6 +1,7 @@
 import random
 import string
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404
@@ -11,7 +12,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenViewBase
 
 from api.serializers import ConfirmationCodeSerializer, UserSerializer
-from api_yamdb.settings import EMAIL_HOST_USER
+
 _User = get_user_model()
 
 
@@ -23,7 +24,7 @@ def _generate_confirmation_code():
 def _send_confirmation_email(email, confirmation_code):
     subject = 'Подтверждение регистрации'
     message = f'Ваш код подтверждения: {confirmation_code}'
-    from_email = EMAIL_HOST_USER
+    from_email = settings.EMAIL_HOST_USER
 
     message = EmailMessage(subject, message, from_email, [email])
     message.send()
@@ -103,7 +104,7 @@ class ObtainTokenView(TokenViewBase):
         user = None
         username = request.data['username']
         user = get_object_or_404(_User, username=username)
-        
+
         if user.confirmation_code != confirmation_code:
             return Response('Неправильный код подтверждения',
                             status=status.HTTP_400_BAD_REQUEST)
