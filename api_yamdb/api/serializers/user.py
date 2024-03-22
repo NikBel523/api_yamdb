@@ -12,23 +12,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = _User
         fields = '__all__'
 
-    def validate_last_name(self, value):
-        if len(value) > 150:
-            raise ValidationError(
-                detail='Слишком длинная фамилия.',
-                code='last_name_too_long')
-        return value
-
-    def validate_first_name(self, value):
-        if len(value) > 150:
-            raise ValidationError(
-                detail='Слишком длинное имя.',
-                code='first_name_too_long')
-        return value
-
 
 class ConfirmationCodeSerializer(serializers.Serializer):
-
-    class Meta:
-        model = _User
-        fields = ('confirmation_code',)
+    """Сериализатор для серииализации confirmation_code."""
