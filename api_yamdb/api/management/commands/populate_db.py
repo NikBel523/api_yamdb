@@ -1,9 +1,10 @@
 import csv
 
+from django.apps import apps as django_apps
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title
 
 _User = get_user_model()
 
@@ -28,7 +29,11 @@ MAPPING = [
     },
     {
         'table_csv': 'genre_title',
-        'model': GenreTitle,
+        # отказались от явного описания M2M модели и её привязки через
+        # through, поэтому, надо тепрь получать авто-генерирумую связей
+        # модель вот так
+        'model': django_apps.get_model('reviews.title_genre',
+                                       require_ready=True),
     },
     {
         'table_csv': 'review',
