@@ -37,6 +37,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def validate_first_name(self, value):
         if len(value) > 150:
             raise ValidationError(
-                "Имя пользователя first_name не должно быть длиннее 150 символов")
+                "Имя пользователя first_name не должно быть <= 150 символов")
 
         return value
