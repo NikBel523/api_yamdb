@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from rest_framework import exceptions, filters, viewsets
-from rest_framework.pagination import PageNumberPagination
 
 from api.permissions import IsAdmin
 from api.serializers.user_profile import UserProfileSerializer
@@ -15,7 +14,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=username',)
-    pagination_class = PageNumberPagination
     lookup_field = 'username'
 
     def _is_me(self):

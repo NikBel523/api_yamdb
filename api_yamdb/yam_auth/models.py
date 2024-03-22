@@ -1,7 +1,5 @@
-from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-# Суперюзер: login: super /EMail: super@fake.com /pwd: yandex22.
 
 
 class YamUser(AbstractUser):
@@ -12,10 +10,10 @@ class YamUser(AbstractUser):
                                      ('admin', 'admin'),
                                      ('moderator', 'moderator'))
                             )
-    bio = models.TextField(blank=True, null=True)
+    bio = models.TextField(blank=True)
     email = models.EmailField('email address', blank=False, unique=True)
     confirmation_code = models.CharField(
-        max_length=5, unique=True, blank=True, null=True)
+        max_length=5, blank=True, null=True)
 
     password = None
     groups = None

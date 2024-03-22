@@ -2,9 +2,9 @@ from datetime import datetime as dt
 
 from django.db.models import Avg
 from rest_framework import serializers
-from reviews.models import Category, Genre, GenreTitle, Title
 
 from api.serializers.category import CategorySerializer, GenreSerializer
+from reviews.models import Category, Genre, GenreTitle, Title
 
 
 class TitleSerializer(serializers.ModelSerializer):

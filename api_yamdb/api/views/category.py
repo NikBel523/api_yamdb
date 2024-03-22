@@ -1,9 +1,8 @@
 from rest_framework import exceptions, filters, viewsets
-from rest_framework.pagination import PageNumberPagination
-from reviews.models import Category, Genre
 
 from api.permissions import ManagesOnlyAdmin
 from api.serializers.category import CategorySerializer, GenreSerializer
+from reviews.models import Category, Genre
 
 
 class _AdminManagebleMixin:
@@ -25,7 +24,6 @@ class CategoryViewSet(_AdminManagebleMixin, viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
-    pagination_class = PageNumberPagination
     lookup_field = 'slug'
 
 
@@ -34,5 +32,4 @@ class GenreViewSet(_AdminManagebleMixin, viewsets.ModelViewSet):
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
-    pagination_class = PageNumberPagination
     lookup_field = 'slug'
