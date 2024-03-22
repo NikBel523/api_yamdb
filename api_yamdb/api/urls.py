@@ -4,7 +4,7 @@ from rest_framework import routers
 from api.views.category import CategoryViewSet, GenreViewSet
 from api.views.review import CommentViewSet, ReviewsViewSet
 from api.views.title import TitleViewSet
-from api.views.user import AuthViewSet, UserViewSet
+from api.views.user import ObtainTokenView, SingUpViewSet
 from api.views.user_profile import UserProfileViewSet
 
 v1_router = routers.DefaultRouter()
@@ -24,7 +24,9 @@ v1_router.register(
 
 urlpatterns = [
     path('v1/', include(v1_router.urls)),
-    path('v1/auth/signup/',
-         UserViewSet.as_view({'post': 'create'})),
-    path('v1/auth/token/', AuthViewSet.as_view({'post': 'create'})),
-]
+    path(
+        'v1/auth/signup/', SingUpViewSet.as_view({'post': 'create'}),
+        name='signup'),
+    path(
+        'v1/auth/token/', ObtainTokenView.as_view(),
+        name='token_obtain_pair'),]

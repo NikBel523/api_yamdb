@@ -16,8 +16,15 @@ class CustomUser(AbstractUser):
     email = models.EmailField('email address', blank=False, unique=True)
     confirmation_code = models.CharField(
         max_length=5, unique=True, blank=True, null=True)
-    # password = models.CharField('password', max_length=128, blank=True, null=True)
+
     password = None
+    groups = None
+    user_permissions = None
+
+    def save(self, *args, **kwargs):
+        if self.is_superuser is True:
+            self.role = 'admin'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username
