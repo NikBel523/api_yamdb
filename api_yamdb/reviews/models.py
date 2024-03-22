@@ -42,7 +42,7 @@ class Title(models.Model):
     year = models.SmallIntegerField(
         'Год выпуска', validators=[
             MaxValueValidator(limit_value=dt.now().year)])
-    description = models.TextField('Описание', null=True, blank=True)
+    description = models.TextField('Описание', blank=True)
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE,
         related_name='titles', blank=False, null=False
