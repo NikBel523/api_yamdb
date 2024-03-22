@@ -3,14 +3,15 @@ import string
 
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
+from django.shortcuts import get_object_or_404
 from rest_framework import mixins, serializers, status, viewsets
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenViewBase
 
 from api.serializers.user import ConfirmationCodeSerializer, UserSerializer
+from api_yamdb.settings import EMAIL_HOST_USER
 
 _User = get_user_model()
 
@@ -23,7 +24,7 @@ def _generate_confirmation_code():
 def _send_confirmation_email(email, confirmation_code):
     subject = 'Подтверждение регистрации'
     message = f'Ваш код подтверждения: {confirmation_code}'
-    from_email = 'no-reply@example.com'
+    from_email = EMAIL_HOST_USER
 
     message = EmailMessage(subject, message, from_email, [email])
     message.send()
@@ -61,10 +62,6 @@ class SingUpViewSet(
 
         if result:
             raise serializers.ValidationError(result)
-
-        if name.casefold() == 'me':
-            raise serializers.ValidationError(
-                'Нельзя использовать имя пользователя me', 'username')
 
     def _process_existing_user(self, user):
         email = self.request.data['email']
@@ -104,20 +101,10 @@ class ObtainTokenView(TokenViewBase):
         if not request.data or not request.data.get('username'):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            serializer.is_valid(raise_exception=True)
-        except TokenError as e:
-            raise InvalidToken(e.args[0])
-
         user = None
-        try:
-            username = request.data['username']
-            user = _User.objects.get(username=username)
-        except _User.DoesNotExist:
-            return Response(
-                {'error': 'Пользователь с таким именем не существует'},
-                status=status.HTTP_404_NOT_FOUND)
-
+        username = request.data['username']
+        user = get_object_or_404(_User, username=username)
+        
         if user.confirmation_code != confirmation_code:
             return Response('Неправильный код подтверждения',
                             status=status.HTTP_400_BAD_REQUEST)

@@ -133,3 +133,5 @@ AUTH_USER_MODEL = 'yam_auth.YamUser'
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
+
+EMAIL_HOST_USER = 'your-email@example.com'
