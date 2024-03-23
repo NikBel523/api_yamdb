@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from yam_auth.constants import MAX_LENGTH_256
 from api.serializers.category import CategorySerializer, GenreSerializer
 from reviews.models import Category, Genre, Title
 from reviews.validators import year_is_not_future
