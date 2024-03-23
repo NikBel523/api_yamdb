@@ -26,15 +26,20 @@ _v1_router.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
     CommentViewSet, basename='comments')
 
-_v1_paths = [
-    path('', include(_v1_router.urls)),
+_v1_auth_paths = [
     path(
-        'auth/signup/', SignupView.as_view(),
+        'signup/', SignupView.as_view(),
         name='signup'),
     path(
-        'auth/token/', ObtainTokenView.as_view(),
+        'token/', ObtainTokenView.as_view(),
         name='token_obtain_pair'),
 ]
+
+_v1_paths = [
+    path('', include(_v1_router.urls)),
+    path('auth/', include(_v1_auth_paths)),
+]
+
 
 urlpatterns = [
     path('v1/', include(_v1_paths)),

@@ -12,8 +12,6 @@ from yam_auth.constants import (
 
 User = get_user_model()
 
-_User = get_user_model()
-
 
 class BaseTagModel(models.Model):
     name = models.CharField('Название', max_length=MAX_LENGTH_256)

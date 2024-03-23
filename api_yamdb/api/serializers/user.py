@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from yam_auth.constants import MAX_LENGTH_150, MAX_LENGTH_254
-from yam_auth.validators import NotMeValidator
+from yam_auth.validators import not_me_validator
 
 User = get_user_model()
 
@@ -30,7 +30,6 @@ def _send_confirmation_email(email, confirmation_code):
 
 
 class UserSerializer(serializers.Serializer):
-    not_me_validator = NotMeValidator()
 
     username = serializers.SlugField(
         validators=[
@@ -39,24 +38,47 @@ class UserSerializer(serializers.Serializer):
         max_length=MAX_LENGTH_150)
     email = serializers.EmailField(max_length=MAX_LENGTH_254)
 
-    def create(self, validated_data):
-        username = validated_data['username']
-        email = validated_data['email']
-        user = None
+    def validate(self, attrs):
+        username = attrs['username']
+        email = attrs['email']
 
-        users = User.objects.filter(username=username)
-        if len(users) == 0:
-            users = User.objects.filter(email=email)
-            if len(users) > 0:
+        # Нам нужно обработать сценарии создания нового юзера
+        # и повторного запроса confirmation_code существующего
+        # если новый, то надо убедиться, что name и email не существуют
+        # в базе. Если повторный - то что у него указан свой email и
+        # name уже сеть в базе.
+
+        user_by_name = User.objects.filter(username=username).first()
+        user_by_mail = User.objects.filter(email=email).first()
+
+        if not user_by_name and not user_by_mail:
+            return attrs
+
+        if user_by_name != user_by_mail:
+            if getattr(
+                    user_by_name,
+                    'username', None) != getattr(
+                    user_by_mail,
+                    'username', None):
                 raise serializers.ValidationError(
                     {'email': f'EMail {email} уже используется '
                      ' другим пользователем'})
-            user = User.objects.create(**validated_data)
-        else:
-            user = users.first()
-            if user.email != email:
+
+            if getattr(
+                    user_by_name,
+                    'email', None) != getattr(
+                    user_by_mail,
+                    'email', None):
                 raise serializers.ValidationError(
                     {'email': 'EMail не совпадает с адресом пользователя'})
+
+        return attrs
+
+    def create(self, data):
+        defaults = data.copy()
+        username = defaults.pop('username')
+        user, _ = User.objects.get_or_create(
+            username=username, defaults=defaults)
 
         user.confirmation_code = _generate_confirmation_code()
         user.save()

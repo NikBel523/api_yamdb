@@ -8,12 +8,11 @@ from yam_auth.constants import (
     ROLE_MODERATOR,
     ROLE_USER,
 )
-from yam_auth.validators import NotMeValidator
+from yam_auth.validators import not_me_validator
 
 
 class YamUser(AbstractUser):
     """Модель пользователя."""
-    not_me_validator = NotMeValidator()
 
     role = models.CharField(max_length=MAX_LENGTH_150,
                             default=ROLE_USER,
@@ -28,13 +27,13 @@ class YamUser(AbstractUser):
         max_length=settings.CONFIRMATION_CODE_LENGTH, blank=True, null=True)
 
     username = models.CharField(
-        ('username'),
+        'username',
         max_length=MAX_LENGTH_150,
         unique=True,
-        help_text=('Не больше 150 символов. Буквы, цифры и @/./+/-/_ только.'),
+        help_text='Не больше 150 символов. Буквы, цифры и @/./+/-/_ только.',
         validators=[AbstractUser.username_validator, not_me_validator],
         error_messages={
-            'unique': ("Пользователь с таким именем существует"),
+            'unique': "Пользователь с таким именем существует",
             'max_length': "Имя пользователя не более 150 символов.",
         },
     )
