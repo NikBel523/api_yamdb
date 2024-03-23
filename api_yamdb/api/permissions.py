@@ -20,9 +20,6 @@ class IsReviewPatcherOrReadOnly(BasePermission):
 
 
 class IsAdmin(BasePermission):
-    def _is_me(self, view):
-        return not view.request.user.is_anonymous and view.kwargs.get(
-            'username', '').casefold() == 'me'
 
     def has_permission(self, request, view):
         user = request.user
