@@ -7,11 +7,10 @@ from django.contrib.auth.models import AbstractUser
 from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework_simplejwt.tokens import AccessToken
 
 from yam_auth.validators import NotMeValidator
 
-_User = get_user_model()
+User = get_user_model()
 
 
 def _generate_confirmation_code():
@@ -26,11 +25,6 @@ def _send_confirmation_email(email, confirmation_code):
 
     message = EmailMessage(subject, message, from_email, [email])
     message.send()
-
-
-def _generate_token(user):
-    token = AccessToken.for_user(user)
-    return token
 
 
 class UserSerializer(serializers.Serializer):
@@ -48,14 +42,14 @@ class UserSerializer(serializers.Serializer):
         email = validated_data['email']
         user = None
 
-        users = _User.objects.filter(username=username)
+        users = User.objects.filter(username=username)
         if len(users) == 0:
-            users = _User.objects.filter(email=email)
+            users = User.objects.filter(email=email)
             if len(users) > 0:
                 raise serializers.ValidationError(
                     {'email': f'EMail {email} уже используется '
                      ' другим пользователем'})
-            user = _User.objects.create(**validated_data)
+            user = User.objects.create(**validated_data)
         else:
             user = users.first()
             if user.email != email:
@@ -76,10 +70,10 @@ class ConfirmationCodeSerializer(serializers.Serializer):
     confirmation_code = serializers.CharField()
 
     def validate(self, attrs):
-        user = get_object_or_404(_User, username=attrs['username'])
+        user = get_object_or_404(User, username=attrs['username'])
         if user.confirmation_code != attrs['confirmation_code']:
             raise serializers.ValidationError(
                 'Неправильный код подтверждения',
             )
 
-        return _generate_token(user)
+        return True
