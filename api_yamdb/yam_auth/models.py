@@ -1,9 +1,9 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from yam_auth.constants import (
-    LENGTH_CONF_CODE,
-    MAX_LENGTH_ROLE,
+    MAX_LENGTH_150,
     ROLE_ADMIN,
     ROLE_MODERATOR,
     ROLE_USER,
@@ -15,7 +15,7 @@ class YamUser(AbstractUser):
     """Модель пользователя."""
     not_me_validator = NotMeValidator()
 
-    role = models.CharField(max_length=MAX_LENGTH_ROLE,
+    role = models.CharField(max_length=MAX_LENGTH_150,
                             default=ROLE_USER,
                             choices=(
                                 (ROLE_USER, 'user'),
@@ -25,14 +25,14 @@ class YamUser(AbstractUser):
     bio = models.TextField(blank=True)
     email = models.EmailField('email address', blank=False, unique=True)
     confirmation_code = models.CharField(
-        max_length=LENGTH_CONF_CODE, blank=True, null=True)
+        max_length=settings.CONFIRMATION_CODE_LENGTH, blank=True, null=True)
     #  Поле password является обязательным и определяется в классе
     #  AbstractBaseUser. По ТЗ данное поле никак не используется,
     #  потому его необходимо переопределть как None.
     password = None
     username = models.CharField(
         ('username'),
-        max_length=150,
+        max_length=MAX_LENGTH_150,
         unique=True,
         help_text=('Не больше 150 символов. Буквы, цифры и @/./+/-/_ только.'),
         validators=[AbstractUser.username_validator, not_me_validator],

@@ -4,20 +4,19 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from reviews.constants import (
-    MAX_NAME_LENGTH,
+from yam_auth.constants import (
+    MAX_LENGTH_50,
+    MAX_LENGTH_256,
     MAX_SCORE,
-    MAX_SLUG_LENGTH,
     MIN_SCORE,
 )
-
 _User = get_user_model()
 
 
 class BaseTagModel(models.Model):
     slug = models.SlugField(
         unique=True,
-        max_length=MAX_SLUG_LENGTH,
+        max_length=MAX_LENGTH_50,
         db_index=True)
 
     class Meta:
@@ -30,17 +29,17 @@ class BaseTagModel(models.Model):
 
 
 class Category(BaseTagModel, models.Model):
-    name = models.CharField('Имя категории', max_length=MAX_NAME_LENGTH)
+    name = models.CharField('Имя категории', max_length=MAX_LENGTH_256)
 
 
 class Genre(BaseTagModel, models.Model):
-    name = models.CharField('Имя жанра', max_length=MAX_NAME_LENGTH)
+    name = models.CharField('Имя жанра', max_length=MAX_LENGTH_256)
 
 
 class Title(models.Model):
     name = models.CharField(
         'Название произведения',
-        max_length=MAX_NAME_LENGTH, db_index=True,
+        max_length=MAX_LENGTH_256, db_index=True,
     )
     year = models.SmallIntegerField(
         'Год выпуска', validators=[

@@ -2,6 +2,7 @@ from datetime import datetime as dt
 
 from rest_framework import serializers
 
+from yam_auth.constants import MAX_LENGTH_256
 from api.serializers.category import CategorySerializer, GenreSerializer
 from reviews.models import Category, Genre, Title
 
@@ -65,7 +66,7 @@ class TitleSerializer(serializers.ModelSerializer):
         return value
 
     def validate_name(self, value):
-        if len(value) > 256:
+        if len(value) > MAX_LENGTH_256:
             raise serializers.ValidationError(
                 'Слишком длинное название.'
             )
