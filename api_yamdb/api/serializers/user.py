@@ -76,7 +76,7 @@ class UserSerializer(serializers.Serializer):
 
     def create(self, data):
         defaults = data.copy()
-        username = defaults.pop('username')
+        username = defaults.pop('username', '')
         user, _ = User.objects.get_or_create(
             username=username, defaults=defaults)
 

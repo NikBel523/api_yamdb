@@ -20,12 +20,10 @@ class IsReviewPatcherOrReadOnly(BasePermission):
 
 
 class IsAdmin(BasePermission):
-    # TODO: разобрать с избавлением от этого: править viewset
-    # UserProfileViewSet
     def _is_me(self, view):
         return not view.request.user.is_anonymous and view.kwargs.get(
             'username', '').casefold() == 'me'
 
     def has_permission(self, request, view):
         user = request.user
-        return user.is_authenticated and (user.is_admin or self._is_me(view))
+        return user.is_authenticated and user.is_admin
