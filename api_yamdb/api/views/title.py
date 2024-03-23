@@ -1,18 +1,18 @@
+from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
-from reviews.models import Title
 
 from api.filters import TitleFilter
-from api.permissions import ManagesOnlyAdmin
-from api.serializers.title import TitleSerializer
+from api.permissions import AdminOrReadOnly
+from api.serializers import TitleSerializer
+from reviews.models import Title
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        rating=Avg('reviews__score')).order_by('name')
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-    pagination_class = PageNumberPagination
     http_method_names = ('get', 'post', 'patch', 'retrive', 'delete')
-    permission_classes = (ManagesOnlyAdmin,)
+    permission_classes = (AdminOrReadOnly,)

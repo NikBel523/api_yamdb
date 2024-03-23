@@ -1,0 +1,5 @@
+MAX_LENGTH_ROLE = 100
+LENGTH_CONF_CODE = 5
+ROLE_USER = 'user'
+ROLE_ADMIN = 'admin'
+ROLE_MODERATOR = 'moderator'

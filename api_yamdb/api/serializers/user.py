@@ -1,33 +1,85 @@
+import random
+import string
 
-from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
+from django.core.mail import EmailMessage
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework_simplejwt.tokens import AccessToken
 
-from custom_auth.models import CustomUser
+from yam_auth.validators import NotMeValidator
+
+_User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+def _generate_confirmation_code():
+    letters_and_digits = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters_and_digits) for i in range(5))
 
-    class Meta:
-        model = CustomUser
-        fields = '__all__'
 
-    def validate_last_name(self, value):
-        if len(value) > 150:
-            raise ValidationError(
-                detail='Слишком длинная фамилия.',
-                code='last_name_too_long')
-        return value
+def _send_confirmation_email(email, confirmation_code):
+    subject = 'Подтверждение регистрации'
+    message = f'Ваш код подтверждения: {confirmation_code}'
+    from_email = settings.EMAIL_HOST_USER
 
-    def validate_first_name(self, value):
-        if len(value) > 150:
-            raise ValidationError(
-                detail='Слишком длинное имя.',
-                code='first_name_too_long')
-        return value
+    message = EmailMessage(subject, message, from_email, [email])
+    message.send()
+
+
+def _generate_token(user):
+    token = AccessToken.for_user(user)
+    return token
+
+
+class UserSerializer(serializers.Serializer):
+    not_me_validator = NotMeValidator()
+
+    username = serializers.SlugField(
+        validators=[
+            AbstractUser.username_validator,
+            not_me_validator],
+        max_length=150)
+    email = serializers.EmailField(max_length=254)
+
+    def create(self, validated_data):
+        username = validated_data['username']
+        email = validated_data['email']
+        user = None
+
+        users = _User.objects.filter(username=username)
+        if len(users) == 0:
+            users = _User.objects.filter(email=email)
+            if len(users) > 0:
+                raise serializers.ValidationError(
+                    {'email': f'EMail {email} уже используется '
+                     ' другим пользователем'})
+            user = _User.objects.create(**validated_data)
+        else:
+            user = users.first()
+            if user.email != email:
+                raise serializers.ValidationError(
+                    {'email': 'EMail не совпадает с адресом пользователя'})
+
+        user.confirmation_code = _generate_confirmation_code()
+        user.save()
+        _send_confirmation_email(user.email, user.confirmation_code)
+
+        return user
 
 
 class ConfirmationCodeSerializer(serializers.Serializer):
+    """Сериализатор для серииализации confirmation_code."""
 
-    class Meta:
-        model = CustomUser
-        fields = ('confirmation_code',)
+    username = serializers.CharField()
+    confirmation_code = serializers.CharField()
+
+    def validate(self, attrs):
+        user = get_object_or_404(_User, username=attrs['username'])
+        if user.confirmation_code != attrs['confirmation_code']:
+            raise serializers.ValidationError(
+                'Неправильный код подтверждения',
+            )
+
+        return _generate_token(user)

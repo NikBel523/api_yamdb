@@ -1,10 +1,9 @@
 from datetime import datetime as dt
 
-from django.db.models import Avg
 from rest_framework import serializers
-from reviews.models import Category, Genre, GenreTitle, Title
 
 from api.serializers.category import CategorySerializer, GenreSerializer
+from reviews.models import Category, Genre, Title
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -18,12 +17,7 @@ class TitleSerializer(serializers.ModelSerializer):
         many=True
     )
 
-    rating = serializers.SerializerMethodField('get_rating')
-
-    def get_rating(self, obj):
-        return obj.reviews.all().aggregate(
-            Avg('score')).get(
-            'score__avg', 0.0)
+    rating = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Title
@@ -47,9 +41,10 @@ class TitleSerializer(serializers.ModelSerializer):
         title = Title.objects.create(category=category, **validated_data)
 
         # К новому произведению добавляется информация о связанных жанрах
-        for genre_name in genres_data:
-            genre = Genre.objects.get(name=genre_name)
-            GenreTitle.objects.create(genre=genre, title=title)
+        for genre_data in genres_data:
+            genre, _ = Genre.objects.get_or_create(name=genre_data)
+            title.genre.add(genre)
+
         return title
 
     # Переопределяю стандартный метод, для вывода информации в заданом формате
