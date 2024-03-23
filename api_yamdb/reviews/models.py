@@ -55,7 +55,7 @@ class Title(models.Model):
 
     class Meta:
         # нужно для повторяемости результата, особенно при пагинации
-        ordering = ('category__slug', )
+        ordering = ('name', )
 
     def __str__(self):
         return self.name

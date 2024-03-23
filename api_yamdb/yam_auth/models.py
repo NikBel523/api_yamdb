@@ -1,5 +1,4 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
 from django.db import models
 
 from yam_auth.constants import (
@@ -9,13 +8,13 @@ from yam_auth.constants import (
     ROLE_MODERATOR,
     ROLE_USER,
 )
+from yam_auth.validators import NotMeValidator
 
 
 class YamUser(AbstractUser):
     """Модель пользователя."""
-    username_validator_me = RegexValidator(
-        regex=r'^(?!me$).+',
-        message='Имя пользователя не может быть "me".')
+    not_me_validator = NotMeValidator()
+
     role = models.CharField(max_length=MAX_LENGTH_ROLE,
                             default=ROLE_USER,
                             choices=(
@@ -36,7 +35,7 @@ class YamUser(AbstractUser):
         max_length=150,
         unique=True,
         help_text=('Не больше 150 символов. Буквы, цифры и @/./+/-/_ только.'),
-        validators=[AbstractUser.username_validator, username_validator_me],
+        validators=[AbstractUser.username_validator, not_me_validator],
         error_messages={
             'unique': ("Пользователь с таким именем существует"),
             'max_length': "Имя пользователя не более 150 символов.",
