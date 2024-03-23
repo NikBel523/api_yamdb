@@ -7,7 +7,7 @@ from api.views import (
     GenreViewSet,
     ObtainTokenView,
     ReviewsViewSet,
-    SingUpViewSet,
+    SignupView,
     TitleViewSet,
     UserProfileViewSet,
 )
@@ -29,7 +29,7 @@ _v1_router.register(
 _v1_paths = [
     path('', include(_v1_router.urls)),
     path(
-        'auth/signup/', SingUpViewSet.as_view({'post': 'create'}),
+        'auth/signup/', SignupView.as_view(),
         name='signup'),
     path(
         'auth/token/', ObtainTokenView.as_view(),

@@ -1,7 +1,7 @@
 from .category import CategoryViewSet, GenreViewSet
 from .review import CommentViewSet, ReviewsViewSet
 from .title import TitleViewSet
-from .user import ObtainTokenView, SingUpViewSet
+from .user import ObtainTokenView, SignupView
 from .user_profile import UserProfileViewSet
 
 __all__ = [
@@ -10,6 +10,6 @@ __all__ = [
     ReviewsViewSet,
     CommentViewSet,
     TitleViewSet,
-    SingUpViewSet,
+    SignupView,
     ObtainTokenView,
     UserProfileViewSet]
