@@ -40,7 +40,7 @@ class Genre(BaseTagModel, models.Model):
 class Title(models.Model):
     name = models.CharField(
         'Название произведения',
-        max_length=MAX_NAME_LENGTH,
+        max_length=MAX_NAME_LENGTH, db_index=True,
     )
     year = models.SmallIntegerField(
         'Год выпуска', validators=[
