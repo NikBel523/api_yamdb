@@ -8,7 +8,7 @@ from reviews.validators import year_is_not_future
 class TitleReadSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
-     rating = serializers.IntegerField(read_only=True)
+    rating = serializers.IntegerField(read_only=True)
 
     year = serializers.IntegerField(validators=[year_is_not_future])
 
@@ -56,4 +56,3 @@ class TitleWriteSerializer(serializers.ModelSerializer):
             'genre',
             'category',
         )
-
