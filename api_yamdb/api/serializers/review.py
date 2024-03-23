@@ -16,11 +16,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         if self.context['request'].method == 'POST':
             current_user = self.context['request'].user
             title_id = self.context['view'].kwargs.get('title_id')
-            existing_reviews = Review.objects.filter(
+            review = Review.objects.filter(
                 author=current_user,
                 title=title_id,
             )
-            if existing_reviews.exists():
+            if review.exists():
                 raise serializers.ValidationError('Отзыв уже есть.')
         return attrs
 

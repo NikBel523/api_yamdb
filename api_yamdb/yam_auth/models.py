@@ -26,10 +26,7 @@ class YamUser(AbstractUser):
     email = models.EmailField('email address', blank=False, unique=True)
     confirmation_code = models.CharField(
         max_length=LENGTH_CONF_CODE, blank=True, null=True)
-    #  Поле password является обязательным и определяется в классе
-    #  AbstractBaseUser. По ТЗ данное поле никак не используется,
-    #  потому его необходимо переопределть как None.
-    password = None
+
     username = models.CharField(
         ('username'),
         max_length=150,
@@ -44,19 +41,16 @@ class YamUser(AbstractUser):
 
     @property
     def is_admin(self):
-        if self.role == ROLE_ADMIN and self.is_superuser and self.is_staff:
-            return True
-        return False
+        return self.role == ROLE_ADMIN or (self.is_superuser and self.is_staff)
 
     @property
     def is_moderator(self):
-        if self.role == ROLE_MODERATOR:
-            return True
-        return False
+        return self.role == ROLE_MODERATOR
 
     def save(self, *args, **kwargs):
-        if self.is_superuser is True:
+        if self.is_superuser:
             self.role = ROLE_ADMIN
+
         super().save(*args, **kwargs)
 
     def __str__(self):
