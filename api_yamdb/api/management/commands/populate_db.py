@@ -6,14 +6,14 @@ from django.core.management.base import BaseCommand
 
 from reviews.models import Category, Comment, Genre, Review, Title
 
-_User = get_user_model()
+User = get_user_model()
 
 BASE_PATH = './static/data/'
 
 MAPPING = [
     {
         'table_csv': 'users',
-        'model': _User,
+        'model': User,
     },
     {
         'table_csv': 'category',

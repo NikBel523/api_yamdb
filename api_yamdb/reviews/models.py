@@ -1,5 +1,3 @@
-from datetime import datetime as dt
-
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -10,8 +8,9 @@ from reviews.constants import (
     MAX_SLUG_LENGTH,
     MIN_SCORE,
 )
+from reviews.validators import year_is_not_future
 
-_User = get_user_model()
+User = get_user_model()
 
 
 class BaseTagModel(models.Model):
@@ -44,8 +43,7 @@ class Title(models.Model):
         max_length=MAX_NAME_LENGTH, db_index=True,
     )
     year = models.SmallIntegerField(
-        'Год выпуска', validators=[
-            MaxValueValidator(limit_value=dt.now().year)])
+        'Год выпуска', validators=[year_is_not_future])
     description = models.TextField('Описание', blank=True)
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE,
@@ -64,7 +62,7 @@ class Title(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        _User, on_delete=models.CASCADE)
+        User, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
     text = models.TextField('Текст отзыва')
     score = models.IntegerField(
@@ -87,7 +85,7 @@ class Review(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(
-        _User, on_delete=models.CASCADE)
+        User, on_delete=models.CASCADE)
 
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE)

@@ -6,13 +6,13 @@ from rest_framework.response import Response
 from api.permissions import IsAdmin
 from api.serializers import UserProfileSerializer
 
-_User = get_user_model()
+User = get_user_model()
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdmin,)
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
-    queryset = _User.objects.all()
+    queryset = User.objects.all()
     serializer_class = UserProfileSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=username',)
