@@ -8,6 +8,7 @@ from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
+from yam_auth.constants import MAX_LENGTH_150, MAX_LENGTH_254
 from yam_auth.validators import NotMeValidator
 
 User = get_user_model()
@@ -15,7 +16,8 @@ User = get_user_model()
 
 def _generate_confirmation_code():
     letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for i in range(5))
+    return ''.join(random.choice(letters_and_digits)
+                   for i in range(settings.CONFIRMATION_CODE_LENGTH))
 
 
 def _send_confirmation_email(email, confirmation_code):
@@ -34,8 +36,8 @@ class UserSerializer(serializers.Serializer):
         validators=[
             AbstractUser.username_validator,
             not_me_validator],
-        max_length=150)
-    email = serializers.EmailField(max_length=254)
+        max_length=MAX_LENGTH_150)
+    email = serializers.EmailField(max_length=MAX_LENGTH_254)
 
     def create(self, validated_data):
         username = validated_data['username']
