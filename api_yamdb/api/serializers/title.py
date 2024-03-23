@@ -6,17 +6,9 @@ from api.serializers.category import CategorySerializer, GenreSerializer
 from reviews.models import Category, Genre, Title
 
 
-class TitleSerializer(serializers.ModelSerializer):
-    category = serializers.SlugRelatedField(
-        queryset=Category.objects.all(),
-        slug_field='slug'
-    )
-    genre = serializers.SlugRelatedField(
-        queryset=Genre.objects.all(),
-        slug_field='slug',
-        many=True
-    )
-
+class TitleReadSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+    genre = GenreSerializer(many=True)
     rating = serializers.FloatField(read_only=True)
 
     class Meta:
@@ -28,24 +20,8 @@ class TitleSerializer(serializers.ModelSerializer):
             'description',
             'genre',
             'category',
-            'rating',)
-
-    def create(self, validated_data):
-
-        # Из уже проверенных данных, получаю список жанров и категорию.
-        genres_data = validated_data.pop('genre')
-        category_data = validated_data.pop('category')
-
-        # С помощью категории создаю произведение
-        category = Category.objects.get(name=category_data)
-        title = Title.objects.create(category=category, **validated_data)
-
-        # К новому произведению добавляется информация о связанных жанрах
-        for genre_data in genres_data:
-            genre, _ = Genre.objects.get_or_create(name=genre_data)
-            title.genre.add(genre)
-
-        return title
+            'rating',
+        )
 
     # Переопределяю стандартный метод, для вывода информации в заданом формате
     def to_representation(self, instance):
@@ -57,16 +33,32 @@ class TitleSerializer(serializers.ModelSerializer):
         ).data
         return representation
 
+
+class TitleWriteSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(),
+        slug_field='slug'
+    )
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
+        many=True
+    )
+
+    class Meta:
+        model = Title
+        fields = (
+            'id',
+            'name',
+            'year',
+            'description',
+            'genre',
+            'category',
+        )
+
     def validate_year(self, value):
         if value > dt.now().year:
             raise serializers.ValidationError(
                 'Год выпуска произведения не может быть больше текущего года.'
-            )
-        return value
-
-    def validate_name(self, value):
-        if len(value) > 256:
-            raise serializers.ValidationError(
-                'Слишком длинное название.'
             )
         return value

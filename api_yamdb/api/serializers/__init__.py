@@ -1,6 +1,6 @@
 from .category import CategorySerializer, GenreSerializer
 from .review import CommentSerializer, ReviewSerializer
-from .title import TitleSerializer
+from .title import TitleReadSerializer, TitleWriteSerializer
 from .user import ConfirmationCodeSerializer, UserSerializer
 from .user_profile import UserProfileSerializer
 
@@ -9,7 +9,8 @@ __all__ = [
     GenreSerializer,
     CommentSerializer,
     ReviewSerializer,
-    TitleSerializer,
+    TitleReadSerializer,
+    TitleWriteSerializer,
     ConfirmationCodeSerializer,
     UserSerializer,
     UserProfileSerializer]

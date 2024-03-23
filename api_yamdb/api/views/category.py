@@ -5,7 +5,10 @@ from api.serializers import CategorySerializer, GenreSerializer
 from reviews.models import Category, Genre
 
 
-class _BaseCategorizingView(viewsets.GenericViewSet):
+class _BaseCategorizingView(mixins.CreateModelMixin,
+                            mixins.ListModelMixin,
+                            mixins.UpdateModelMixin,
+                            mixins.DestroyModelMixin, viewsets.GenericViewSet):
     http_method_names = ('get', 'post', 'retrive', 'delete')
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
@@ -13,21 +16,11 @@ class _BaseCategorizingView(viewsets.GenericViewSet):
     lookup_field = 'slug'
 
 
-class CategoryViewSet(
-        mixins.CreateModelMixin,
-        mixins.ListModelMixin,
-        mixins.UpdateModelMixin,
-        mixins.DestroyModelMixin,
-        _BaseCategorizingView):
+class CategoryViewSet(_BaseCategorizingView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class GenreViewSet(
-        mixins.CreateModelMixin,
-        mixins.ListModelMixin,
-        mixins.UpdateModelMixin,
-        mixins.DestroyModelMixin,
-        _BaseCategorizingView):
+class GenreViewSet(_BaseCategorizingView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer

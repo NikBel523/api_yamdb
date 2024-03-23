@@ -15,6 +15,7 @@ _User = get_user_model()
 
 
 class BaseTagModel(models.Model):
+    name = models.CharField('Название', max_length=MAX_NAME_LENGTH)
     slug = models.SlugField(
         unique=True,
         max_length=MAX_SLUG_LENGTH,
@@ -30,11 +31,11 @@ class BaseTagModel(models.Model):
 
 
 class Category(BaseTagModel, models.Model):
-    name = models.CharField('Имя категории', max_length=MAX_NAME_LENGTH)
+    pass
 
 
 class Genre(BaseTagModel, models.Model):
-    name = models.CharField('Имя жанра', max_length=MAX_NAME_LENGTH)
+    pass
 
 
 class Title(models.Model):
