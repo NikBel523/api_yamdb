@@ -9,6 +9,7 @@ from api.serializers import UserProfileSerializer
 User = get_user_model()
 
 
+"""
 class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdmin,)
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
@@ -27,7 +28,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(
                 request.user,
                 data=request.data,
-                partial=True
+                partial=request.method == 'PATCH'
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -35,3 +36,34 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         elif request.method == 'DELETE':
             self.perform_destroy(request.user)
             return Response(status=status.HTTP_204_NO_CONTENT)
+"""
+
+# TODO: надо перейти на @action
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdmin,)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('=username',)
+    lookup_field = 'username'
+
+    def _is_me(self):
+        return self.kwargs.get('username', None) == 'me'
+
+    def get_object(self):
+        if self._is_me():
+            return User.objects.get(pk=self.request.user.pk)
+        return super().get_object()
+
+    def destroy(self, request, *args, **kwargs):
+        if self._is_me():
+            raise exceptions.MethodNotAllowed(method='delete')
+        return super().destroy(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        if self._is_me():
+            serializer.validated_data.pop('role', None)
+        serializer.save()

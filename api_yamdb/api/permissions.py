@@ -23,7 +23,7 @@ class IsAdmin(BasePermission):
     # TODO: разобрать с избавлением от этого: править viewset
     def _is_me(self, view):
         return not view.request.user.is_anonymous and view.kwargs.get(
-            'username', None) == 'me'
+            'username', '').casefold() == 'me'
 
     def has_permission(self, request, view):
         user = request.user
