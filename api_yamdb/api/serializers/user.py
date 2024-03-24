@@ -100,4 +100,4 @@ class ConfirmationCodeSerializer(serializers.Serializer):
                 'Неправильный код подтверждения',
             )
 
-        return True
+        return attrs

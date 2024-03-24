@@ -19,24 +19,20 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     search_fields = ('=username',)
     lookup_field = 'username'
 
-    @action(url_path='me',
-            detail=False,
-            methods=['get',
-                     'patch'],
+    @action(url_path='me', detail=False, methods=['get', 'patch'],
             permission_classes=[IsAuthenticated])
     def me(self, request):
         if request.method == 'GET':
             serializer = self.get_serializer(request.user)
             return Response(serializer.data)
 
-        elif request.method == 'PATCH':
-            serializer = self.get_serializer(
-                request.user,
-                data=request.data,
-                partial=True,
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.validated_data.pop('role', None)
-            serializer.save()
+        serializer = self.get_serializer(
+            request.user,
+            data=request.data,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data.pop('role', None)
+        serializer.save()
 
-            return Response(serializer.data)
+        return Response(serializer.data)
