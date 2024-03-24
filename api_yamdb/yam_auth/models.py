@@ -40,7 +40,7 @@ class YamUser(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == ROLE_ADMIN or self.is_superuser and self.is_staff
+        return self.role == ROLE_ADMIN or self.is_superuser or self.is_staff
 
     @property
     def is_moderator(self):

@@ -46,11 +46,13 @@ class TitleWriteSerializer(serializers.ModelSerializer):
         )
 
     def to_representation(self, instance):
+        """
         representation = super().to_representation(instance)
         representation['category'] = CategorySerializer(instance.category).data
         representation['genre'] = GenreSerializer(
             instance.genre.all(),
             many=True,
         ).data
+        """
 
-        return representation
+        return TitleReadSerializer(instance).data
